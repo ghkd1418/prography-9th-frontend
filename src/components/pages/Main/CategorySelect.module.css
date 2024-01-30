@@ -1,0 +1,19 @@
+.categoryItem {
+  padding: 4px 16px;
+  font-size: 16px;
+  border: 1px solid #d4d4d4;
+  border-radius: 50px;
+  background-color: #fff;
+  transition: all 0.21s;
+  line-height: 20px;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.categoryItem:active {
+  background-color: #ffe8e3;
+}
+
+.active {
+  background-color: #ffe8e3;
+  border-color: #ff595f;
+}
