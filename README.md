@@ -1,4 +1,4 @@
-# 페이먼트 앱
+# Prography 9th / FE 사전 과제
 
 ### 기술 스택
 - react
@@ -6,4 +6,4 @@
 - tailwind
 
 ### 사용 라이브러리
-- recharts
+- 
