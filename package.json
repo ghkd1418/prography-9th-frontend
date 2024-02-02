@@ -1,5 +1,5 @@
 {
-  "name": "paymentapp",
+  "name": "prography",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -16,8 +16,7 @@
     "classnames": "^2.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.21.1",
-    "recharts": "^2.10.4"
+    "react-router-dom": "^6.21.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",

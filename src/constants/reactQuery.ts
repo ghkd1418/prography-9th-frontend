@@ -10,4 +10,5 @@ export const QUERY_CLIENT_OPTIONS = {
 export const QUERY_KEY = {
   all: ['all'] as const,
   getCategories: () => ['get-categories'] as const,
+  getProducts: () => ['get-products'] as const,
 }
