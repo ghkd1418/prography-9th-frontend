@@ -5,6 +5,7 @@ import { useGetCategories, useGetMeals } from '../hooks/fetch/useFetchItems'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import buildQueryString from '../utils/function/buildQueryString'
 import useIntersectionObserver from '../hooks/common/useIntersectionObserver'
+import classNames from 'classnames'
 
 type MealType = {
   idMeal: string
@@ -71,6 +72,16 @@ function Main() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meals, lastIndex])
 
+  const [displayOption, setDisplayOption] = useState('4') // 초기값: 2개씩 보기
+
+  const handleChangeDisplayOption = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setDisplayOption(event.target.value)
+  }
+
+  const itemsPerRow = displayOption === '2' ? 2 : 4
+
   if (pending && isCategorieseLoading) return <>loading</>
 
   return (
@@ -87,21 +98,32 @@ function Main() {
         ))}
       </CategorySelect>
       <Spacing size={30} />
-
-      <ul className='flex flex-wrap justify-center'>
+      {/* 상단 select 버튼 */}
+      <select
+        className='hidden md:block'
+        value={displayOption}
+        onChange={handleChangeDisplayOption}
+      >
+        <option value='2'>2개씩 보기</option>
+        <option value='4'>4개씩 보기</option>
+      </select>
+      <Spacing size={30} />
+      <ul className='flex flex-wrap justify-center '>
         {visibleMeals.map((meal, i) => {
           return (
             <li
               key={i}
-              className={`flex flex-col justify-center items-center p-4`}
+              className={`w-full md:w-1/${itemsPerRow}
+                flex flex-col justify-center items-center p-4`}
             >
               <img
                 src={meal?.strMealThumb}
                 alt={meal?.strMeal}
                 loading='lazy'
-                className='w-40'
+                className='w-full'
               />
-              <p>{meal?.strMeal}</p>
+              <Spacing size={10} />
+              <b className={`text-${itemsPerRow}xl`}>{meal?.strMeal}</b>
             </li>
           )
         })}
