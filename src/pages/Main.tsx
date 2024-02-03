@@ -5,7 +5,6 @@ import { useGetCategories, useGetMeals } from '../hooks/fetch/useFetchItems'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import buildQueryString from '../utils/function/buildQueryString'
 import useIntersectionObserver from '../hooks/common/useIntersectionObserver'
-import classNames from 'classnames'
 
 type MealType = {
   idMeal: string
