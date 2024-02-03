@@ -14,17 +14,6 @@ interface CategoryType {
   categories: CategoriesType
 }
 
-// type MealsType = [
-//   {
-//     idMeal: string
-//     strMeal: string
-//     strMealThumb: string
-//   }
-// ]
-// interface ProductType {
-//   meals: MealsType
-// }
-
 export const useGetCategories = () =>
   useQuery<CategoryType, Error, CategoriesType>({
     queryKey: QUERY_KEY.getCategories(),
