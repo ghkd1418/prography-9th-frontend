@@ -14,8 +14,10 @@ type MealType = {
 
 function Main() {
   // get searchParams for fetch category
+
   const [searchParams] = useSearchParams()
   const queryStringToArray = searchParams.get('category')?.split(',') || []
+
   const [selectedCategory, setSelectedCategory] =
     useState<string[]>(queryStringToArray)
 
@@ -23,19 +25,43 @@ function Main() {
   const { data: categories, isLoading: isCategorieseLoading } =
     useGetCategories()
 
+  // 필터링
+  const filterValue = searchParams.get('filter') ?? ''
+
+  const filterFromURL =
+    {
+      new: '최신순',
+      asc: '이름 오름차순',
+      desc: '이름 내림차순',
+    }[filterValue] || '최신순'
+
+  const [filterOption, setFilterOption] = useState(filterFromURL)
+
+  const filterParam =
+    {
+      최신순: 'new',
+      '이름 오름차순': 'asc',
+      '이름 내림차순': 'desc',
+    }[filterOption] || 'new'
+
   //update url
   const navigate = useNavigate()
-  const queryString = buildQueryString('category', selectedCategory)
 
   useEffect(() => {
+    const queryString = buildQueryString('category', selectedCategory)
+    const filterValueQueryString = buildQueryString('filter', filterParam)
+
     if (!selectedCategory.length) {
       navigate('/')
     }
 
     if (!queryString) return
 
-    navigate(`?${queryString}`)
-  }, [queryString, navigate, selectedCategory])
+    // if (filterValue === filterParam) return
+    // 같아도 selectedCategory달라지면 업데이트
+
+    navigate(`?${queryString}&${filterValueQueryString}`)
+  }, [navigate, selectedCategory, filterParam])
 
   // infinity scroll
   const target = useRef<HTMLDivElement | null>(null)
@@ -49,7 +75,6 @@ function Main() {
 
   useEffect(() => {
     setVisibleMeals(meals)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory])
 
   useEffect(() => {
@@ -62,16 +87,17 @@ function Main() {
     ) {
       return
     }
+    const sliceMeals = meals.slice(0, lastIndex + mealsPerPage)
+    setVisibleMeals(sliceMeals)
 
-    setVisibleMeals(meals.slice(0, lastIndex + mealsPerPage))
     observe(currentTarget)
     return () => {
       unobserve(currentTarget)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meals, lastIndex])
 
-  const [displayOption, setDisplayOption] = useState('4') // 초기값: 2개씩 보기
+  // 사용자 선택 레이아웃
+  const [displayOption, setDisplayOption] = useState('4')
 
   const handleChangeDisplayOption = (
     event: React.ChangeEvent<HTMLSelectElement>
@@ -80,6 +106,37 @@ function Main() {
   }
 
   const itemsPerRow = displayOption === '2' ? 2 : 4
+
+  const handleChangeFilterOption = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setFilterOption(event.target.value)
+  }
+
+  useEffect(() => {
+    let sortedMeals
+    switch (filterOption) {
+      case '최신순':
+        sortedMeals = [...visibleMeals].sort(
+          (a, b) => parseInt(b.idMeal) - parseInt(a.idMeal)
+        )
+        break
+      case '이름 오름차순':
+        sortedMeals = [...visibleMeals].sort((a, b) =>
+          a.strMeal.localeCompare(b.strMeal)
+        )
+        break
+      case '이름 내림차순':
+        sortedMeals = [...visibleMeals].sort((a, b) =>
+          b.strMeal.localeCompare(a.strMeal)
+        )
+        break
+      default:
+        sortedMeals = visibleMeals
+    }
+
+    setVisibleMeals(sortedMeals)
+  }, [filterOption, lastIndex])
 
   if (pending && isCategorieseLoading) return <>loading</>
 
@@ -97,17 +154,23 @@ function Main() {
         ))}
       </CategorySelect>
       <Spacing size={30} />
-      {/* 상단 select 버튼 */}
-      <select
-        className='hidden md:block'
-        value={displayOption}
-        onChange={handleChangeDisplayOption}
-      >
-        <option value='2'>2개씩 보기</option>
-        <option value='4'>4개씩 보기</option>
-      </select>
+      <div className='flex justify-between'>
+        <select
+          value={displayOption}
+          onChange={handleChangeDisplayOption}
+          className='hidden md:block'
+        >
+          <option value='2'>2개씩 보기</option>
+          <option value='4'>4개씩 보기</option>
+        </select>
+        <select value={filterOption} onChange={handleChangeFilterOption}>
+          <option value='최신순'>최신순</option>
+          <option value='이름 오름차순'>이름 오름차순</option>
+          <option value='이름 내림차순'>이름 내림차순</option>
+        </select>
+      </div>
       <Spacing size={30} />
-      <ul className='flex flex-wrap justify-center '>
+      <ul className='flex flex-wrap'>
         {visibleMeals.map((meal, i) => {
           return (
             <li
